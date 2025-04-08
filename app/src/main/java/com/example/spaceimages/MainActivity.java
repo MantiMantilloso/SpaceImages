@@ -70,6 +70,7 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -87,8 +88,18 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // ✅ Usa nuevo listener con data y position
-        adapter = new ImageAdapter((data, position) -> {
+//        // ✅ Usa nuevo listener con data y position
+//        adapter = new ImageAdapter((data, position) -> {
+//            if (data.fullImage == null) {
+//                new FullImageDownloadTask(MainActivity.this, data, position).execute();
+//            } else {
+//                openImageActivity(data, position);
+//            }
+//        });
+          adapter = new ImageAdapter((data, position) -> {
+            // ✅ Este Toast aparece cuando haces clic en una imagen
+            Toast.makeText(this, "Clic detectado en: " + data.title, Toast.LENGTH_SHORT).show();
+
             if (data.fullImage == null) {
                 new FullImageDownloadTask(MainActivity.this, data, position).execute();
             } else {
