@@ -47,6 +47,7 @@ package com.example.spaceimages;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.ImageView;
 
 import java.lang.ref.WeakReference;
@@ -64,12 +65,12 @@ public class ThumbnailDownloadTask extends AsyncTask<Void, Void, Bitmap> {
     @Override
     protected Bitmap doInBackground(Void... voids) {
         try {
-            String filename = data.src.substring(data.src.lastIndexOf("/") + 1);
-            String thumbnailUrl = "https://cdn.esahubble.org/archives/images/thumb300y/" + filename;
-            URL url = new URL(thumbnailUrl);
+            String filename = extractFilename(data.src);
+            URL url = new URL("https://cdn.esahubble.org/archives/images/thumb300y/" + filename);
+            Log.d("ThumbnailDownload", "Downloaded img from: "+url);
             return BitmapFactory.decodeStream(url.openConnection().getInputStream());
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("ThumbnailDownload", "Error loading thumbnail", e);
         }
         return null;
     }
@@ -79,7 +80,12 @@ public class ThumbnailDownloadTask extends AsyncTask<Void, Void, Bitmap> {
         ImageView imageView = imageViewRef.get();
         if (bitmap != null && imageView != null) {
             imageView.setImageBitmap(bitmap);
-            data.thumbnail = bitmap;
+            data.thumbnail = bitmap; // Cache thumbnail
+            DataSingleton.getInstance().updateImageData(data); // Add this method
         }
+    }
+
+    private String extractFilename(String src) {
+        return src.substring(src.lastIndexOf("/") + 1);
     }
 }

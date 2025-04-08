@@ -32,6 +32,26 @@ public class DataSingleton {
         return imageCache.values();
     }
 
+    public static String extractFilename(String url) {
+        if (url == null || url.isEmpty()) return "";
+
+        // Handle URLs with query parameters
+        int queryIndex = url.indexOf('?');
+        if (queryIndex != -1) {
+            url = url.substring(0, queryIndex);
+        }
+
+        // Extract after last slash
+        int lastSlashIndex = url.lastIndexOf('/');
+        if (lastSlashIndex != -1 && lastSlashIndex < url.length() - 1) {
+            return url.substring(lastSlashIndex + 1);
+        }
+        return url; // Return original if no slashes found
+    }
+    public void updateImageData(ImageData updatedData) {
+        // Replace existing data with updated version
+        imageCache.put(extractFilename(updatedData.src), updatedData);
+    }
     public void logImageAccess(String filename) {
         for (HistoryEntry entry : downloadHistory) {
             if (entry.filename.equals(filename)) {

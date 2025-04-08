@@ -87,13 +87,9 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // ✅ Usa nuevo listener con data y position
-        adapter = new ImageAdapter((data, position) -> {
-            if (data.fullImage == null) {
-                new FullImageDownloadTask(MainActivity.this, data, position).execute();
-            } else {
-                openImageActivity(data, position);
-            }
+
+        adapter = new ImageAdapter(MainActivity.this,(data, position) -> {
+            openImageActivity(data, position); // Always open immediately
         });
 
         recyclerView.setAdapter(adapter);
@@ -120,7 +116,8 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, ImageActivity.class);
         intent.putExtra("filename", filename);
-        intent.putExtra("position", position + 1); // para mostrar el número (desde 1)
+        intent.putExtra("position", position + 1);
+        intent.putExtra("thumbnail", data.thumbnail); // Pass thumbnail bitmap
         startActivity(intent);
     }
 

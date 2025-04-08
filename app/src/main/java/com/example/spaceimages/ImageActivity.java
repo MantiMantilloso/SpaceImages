@@ -41,46 +41,48 @@ package com.example.spaceimages;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class ImageActivity extends AppCompatActivity {
-
-    private ImageView imageView;
-    private TextView titleView, infoView;
+    private ImageView fullImage;
+    private TextView title, positionNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image);
 
-        imageView = findViewById(R.id.full_image);
-        titleView = findViewById(R.id.text_title);
-        infoView = findViewById(R.id.text_info);
+        fullImage = findViewById(R.id.iv_full_image);
+        title = findViewById(R.id.tv_title);
+        positionNumber = findViewById(R.id.tv_position);
 
-        // Obtener extras
         String filename = getIntent().getStringExtra("filename");
-        int position = getIntent().getIntExtra("position", -1); // Número de imagen
+        int position = getIntent().getIntExtra("position", 1);
 
-        if (filename != null) {
-            DataSingleton.ImageData data = DataSingleton.getInstance().getImageData(filename);
-            if (data != null) {
-                Bitmap fullImage = data.fullImage;
-                if (fullImage != null) {
-                    imageView.setImageBitmap(fullImage);
-                }
+        DataSingleton.ImageData data = DataSingleton.getInstance().getImageData(filename);
 
-                // ✅ Mostrar título con número si lo hay
-                if (position != -1) {
-                    titleView.setText(position + ". " + data.title);
-                } else {
-                    titleView.setText(data.title);
-                }
+        if (data != null) {
+            // Set initial data
+            positionNumber.setText(String.valueOf(position));
+            title.setText(data.title);
 
-                infoView.setText("Dimensiones: " + data.width + " x " + data.height);
+            // Load image
+            if (data.fullImage != null) {
+                fullImage.setImageBitmap(data.fullImage);
+            } else {
+                loadFullImage(data);
             }
         }
     }
+
+
+
+    private void loadFullImage(DataSingleton.ImageData data) {
+        new FullImageDownloadTask(fullImage, data).execute();
+    }
+
 }
