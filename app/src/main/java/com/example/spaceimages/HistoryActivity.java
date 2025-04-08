@@ -1,6 +1,7 @@
 package com.example.spaceimages;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -37,6 +38,7 @@ public class HistoryActivity extends AppCompatActivity {
 
     private void loadHistory() {
         List<DataSingleton.HistoryEntry> history = DataSingleton.getInstance().getDownloadHistory();
+        Log.d("History", "Loaded history size: " + history.size());
         adapter.setData(history);
     }
 

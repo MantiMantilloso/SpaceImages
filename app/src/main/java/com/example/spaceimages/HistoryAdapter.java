@@ -30,7 +30,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         DataSingleton.HistoryEntry entry = historyList.get(position);
-        holder.textFilename.setText(entry.filename);
+
+        DataSingleton.ImageData data = DataSingleton.getInstance().getImageData(entry.filename);
+        String title = (data != null && data.title != null) ? data.title : entry.filename;
+
+        holder.textFilename.setText(title);
         holder.textViews.setText("Visto: " + entry.viewCount + " veces");
         holder.textDate.setText("Fecha: " + dateFormat.format(entry.downloadTime));
     }

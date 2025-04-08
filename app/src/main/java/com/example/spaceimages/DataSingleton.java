@@ -1,6 +1,8 @@
 package com.example.spaceimages;
 
 import android.graphics.Bitmap;
+import android.util.Log;
+
 import java.util.*;
 
 public class DataSingleton {
@@ -53,17 +55,26 @@ public class DataSingleton {
         imageCache.put(extractFilename(updatedData.src), updatedData);
     }
     public void logImageAccess(String filename) {
+        // Si ya esta en el registro aumentar el contador
         for (HistoryEntry entry : downloadHistory) {
             if (entry.filename.equals(filename)) {
                 entry.viewCount++;
+                Log.d("History", "Updated entry: " + filename + " count: " + entry.viewCount);
                 return;
             }
         }
-        downloadHistory.add(new HistoryEntry(filename));
+
+        // Si se observa por primera vez o no esta en el registro
+        HistoryEntry newEntry = new HistoryEntry(filename);
+        downloadHistory.add(newEntry);
+        Log.d("History", "New entry: " + filename);
     }
 
+    //Ordena la lista de descargas
     public List<HistoryEntry> getDownloadHistory() {
-        return downloadHistory;
+        List<HistoryEntry> sorted = new ArrayList<>(downloadHistory);
+        sorted.sort((a, b) -> b.downloadTime.compareTo(a.downloadTime));
+        return sorted;
     }
 
     public void clearAll() {
@@ -91,6 +102,7 @@ public class DataSingleton {
             this.viewCount = 1;
             this.downloadTime = new Date();
         }
+
     }
 }
 
